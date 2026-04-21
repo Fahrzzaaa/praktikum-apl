@@ -42,14 +42,13 @@ void tambahProduk(Skincare *lemari, int *jumlah) {
         return;
     }
 
-    cout << "\nMasukkan Merk Skincare: ";
+    cout << "Masukkan Merk Skincare: ";
     cin >> (lemari + *jumlah)->merk;
 
     cout << "Masukkan jumlah stok: ";
     cin >> (lemari + *jumlah)->stok;
 
     (*jumlah)++;
-
     cout << "Produk berhasil ditambahkan.\n";
 }
 
@@ -62,7 +61,6 @@ void tambahStok(Skincare *lemari, int jumlah) {
     if (nomor > 0 && nomor <= jumlah) {
         cout << "Tambah stok: ";
         cin >> tambah;
-
         (lemari + nomor - 1)->stok += tambah;
         cout << "Stok berhasil ditambahkan.\n";
     } else {
@@ -101,9 +99,7 @@ void hapusProduk(Skincare *lemari, int *jumlah) {
         for (int i = hapus - 1; i < *jumlah - 1; i++) {
             *(lemari + i) = *(lemari + i + 1);
         }
-
         (*jumlah)--;
-
         cout << "Produk berhasil dihapus.\n";
     } else {
         cout << "Nomor tidak valid.\n";
@@ -115,9 +111,6 @@ int totalStokRekursif(Skincare *lemari, int n) {
     return (lemari + n - 1)->stok + totalStokRekursif(lemari, n - 1);
 }
 
-//////////////////// SORTING ////////////////////
-
-// 1. Bubble Sort (Merk Z-A)
 void sortingMerkDescending(Skincare *lemari, int jumlah) {
     for (int i = 0; i < jumlah - 1; i++) {
         for (int j = 0; j < jumlah - i - 1; j++) {
@@ -128,80 +121,79 @@ void sortingMerkDescending(Skincare *lemari, int jumlah) {
             }
         }
     }
-    cout << "Urut Z-A (Bubble Sort).\n";
+    cout << "udah urut yaww.\n";
 }
 
-// 2. Selection Sort (Stok Ascending)
 void sortingStokAscending(Skincare *lemari, int jumlah) {
     for (int i = 0; i < jumlah - 1; i++) {
         int minIndex = i;
-
         for (int j = i + 1; j < jumlah; j++) {
             if ((lemari + j)->stok < (lemari + minIndex)->stok) {
                 minIndex = j;
             }
         }
-
         Skincare temp = *(lemari + i);
         *(lemari + i) = *(lemari + minIndex);
         *(lemari + minIndex) = temp;
     }
-
-    cout << "Stok kecil ke besar (Selection Sort).\n";
+    cout << "Stok kecil ke besar.\n";
 }
 
-// ===== Merge Sort =====
 void merge(Skincare *lemari, int left, int mid, int right) {
+    Skincare L[100], R[100];
     int n1 = mid - left + 1;
     int n2 = right - mid;
 
-    Skincare L[100], R[100];
-
-    for (int i = 0; i < n1; i++)
-        L[i] = lemari[left + i];
-    for (int j = 0; j < n2; j++)
-        R[j] = lemari[mid + 1 + j];
+    for (int i = 0; i < n1; i++) L[i] = lemari[left + i];
+    for (int j = 0; j < n2; j++) R[j] = lemari[mid + 1 + j];
 
     int i = 0, j = 0, k = left;
 
     while (i < n1 && j < n2) {
-        if (L[i].merk <= R[j].merk) {
-            lemari[k] = L[i];
-            i++;
-        } else {
-            lemari[k] = R[j];
-            j++;
-        }
-        k++;
+        if (L[i].merk <= R[j].merk) lemari[k++] = L[i++];
+        else lemari[k++] = R[j++];
     }
 
-    while (i < n1) {
-        lemari[k++] = L[i++];
-    }
-
-    while (j < n2) {
-        lemari[k++] = R[j++];
-    }
+    while (i < n1) lemari[k++] = L[i++];
+    while (j < n2) lemari[k++] = R[j++];
 }
 
 void mergeSort(Skincare *lemari, int left, int right) {
     if (left < right) {
         int mid = (left + right) / 2;
-
         mergeSort(lemari, left, mid);
         mergeSort(lemari, mid + 1, right);
-
         merge(lemari, left, mid, right);
     }
 }
 
-// 3. Merge Sort (Merk A-Z)
 void sortingMerkAscending(Skincare *lemari, int jumlah) {
     mergeSort(lemari, 0, jumlah - 1);
-    cout << "Urut A-Z (Merge Sort).\n";
+    cout << "udah urut yaww.\n";
 }
 
-////////////////////////////////////////////////
+void linearSearchMerk(Skincare *lemari, int jumlah, string cari) {
+    for (int i = 0; i < jumlah; i++) {
+        if ((lemari + i)->merk == cari) {
+            cout << "Ditemukan di posisi ke-" << i + 1 << endl;
+            cout << "Merk: " << (lemari + i)->merk << endl;
+            cout << "Stok: " << (lemari + i)->stok << endl;
+            return;
+        }
+    }
+    cout << "Produk tidak ditemukan.\n";
+}
+
+int binarySearchStok(Skincare *lemari, int jumlah, int cari) {
+    int kiri = 0, kanan = jumlah - 1;
+    while (kiri <= kanan) {
+        int tengah = (kiri + kanan) / 2;
+        if ((lemari + tengah)->stok == cari) return tengah;
+        else if ((lemari + tengah)->stok < cari) kiri = tengah + 1;
+        else kanan = tengah - 1;
+    }
+    return -1;
+}
 
 int main() {
     User user = {"Dava_imoet", "100"};
@@ -209,47 +201,55 @@ int main() {
     int percobaan = 0;
 
     while (percobaan < 3) {
-        cout << "===== LOGIN GUDANG SKINCARE =====\n";
-        cout << "Nama: ";
+        cout << "\n===== LOGIN =====\n";
+        cout << "Nama nya siapa yaaaa : ";
         cin >> inputNama;
-        cout << "NIM: ";
+        cout << "3 angka di blakang nim berapa  : ";
         cin >> inputNim;
 
         if (login(&user, &inputNama, &inputNim)) {
-            cout << "\nLogin berhasil!\n";
+            cout << "Login berhasil!\n";
             break;
         } else {
-            cout << "Login gagal!\n";
-            percobaan++;
+            cout << "Login gagal yaww!\n";
+            cout << "Sisa percobaan: " << 3 - percobaan - 1 << endl;
         }
+        percobaan++;
     }
 
-    if (percobaan == 3) {
-        cout << "\nGagal login 3 kali.\n";
-        return 0;
-    }
+    if (percobaan == 3) return 0;
 
     Skincare lemari[100] = {
-        {"Glad2Glow", 39},{"TheOriginote", 40},{"Skintific", 37},
-        {"Wardah", 28},{"Implora", 28},{"Nuface", 26},
-        {"Scarlett", 35},{"Emina", 12},{"Azarine", 33},
-        {"Facetology", 31},{"Npure", 42}
+        {"Glad2Glow",39},{"TheOriginote",40},{"Skintific",37},
+        {"Wardah",28},{"Implora",28},{"Nuface",26},
+        {"Scarlett",35},{"Emina",12},{"Azarine",33},
+        {"Facetology",31},{"Npure",42}
     };
 
     int jumlah = 11, pilihan;
 
     do {
-        cout << "\n===== SISTEM GUDANG SKINCARE =====\n";
-        cout << "1. Tambah Produk\n";
-        cout << "2. Lihat Paket Skincare\n";
-        cout << "3. Menambah Stok Produk\n";
-        cout << "4. Mengurangi Stok Produk\n";
-        cout << "5. Hapus Merek Skincare\n";
-        cout << "6. Urutakn merek skincare mulai dari huruf Z\n";
-        cout << "7. Urutkan jumlah sotok yang mau habis\n";
-        cout << "8. Urutakn merek skincare mulai dari huruf A\n";
-        cout << "9. Keluar\n";
-        cout << "Pilih menu: ";
+        cout << "\n=========================================\n";
+        cout << "         MENU UTAMA GUDANG SKINCARE\n";
+        cout << "=========================================\n";
+
+        cout << left << setw(5) << "No" << "Fitur\n";
+        cout << "-----------------------------------------\n";
+
+        cout << setw(5) << "1"  << "Tambah Produk\n";
+        cout << setw(5) << "2"  << "Lihat Produk\n";
+        cout << setw(5) << "3"  << "Tambah Stok\n";
+        cout << setw(5) << "4"  << "Kurangi Stok\n";
+        cout << setw(5) << "5"  << "Hapus Produk\n";
+        cout << setw(5) << "6"  << "urutkan Merk (Z-A)\n";
+        cout << setw(5) << "7"  << "urutkan stok yang mau habis\n";
+        cout << setw(5) << "8"  << "urutkan Merk (A-Z)\n";
+        cout << setw(5) << "9"  << "Cari Merk\n";
+        cout << setw(5) << "10" << "Cari Stok\n";
+        cout << setw(5) << "11" << "Keluar\n";
+
+        cout << "=========================================\n";
+        cout << "Pilih menu (1-11): ";
         cin >> pilihan;
 
         if (pilihan == 1) tambahProduk(lemari, &jumlah);
@@ -263,8 +263,27 @@ int main() {
         else if (pilihan == 6) sortingMerkDescending(lemari, jumlah);
         else if (pilihan == 7) sortingStokAscending(lemari, jumlah);
         else if (pilihan == 8) sortingMerkAscending(lemari, jumlah);
+        else if (pilihan == 9) {
+            string cari;
+            cout << "Cari merk skincare: ";
+            cin >> cari;
+            linearSearchMerk(lemari, jumlah, cari);
+        }
+        else if (pilihan == 10) {
+            int cari;
+            cout << "Cari stok skincare: ";
+            cin >> cari;
+            sortingStokAscending(lemari, jumlah);
+            int hasil = binarySearchStok(lemari, jumlah, cari);
 
-    } while (pilihan != 9);
+            if (hasil != -1)
+                cout << "Ditemukan: " << (lemari + hasil)->merk << " - " << (lemari + hasil)->stok << endl;
+            else
+                cout << "Tidak ditemukan.\n";
+        }
 
-    cout << "\nTerima kasih.\n";
-    return 0;
+    } while (pilihan != 11);
+
+    cout << "Terima kasih udah pakai program aku, kasi nilai 100 yahh.\n";
+}
+
